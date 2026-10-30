@@ -2,7 +2,9 @@ import {View, Text, TextInput, Button, StyleSheet, ScrollView} from "react-nativ
 import {useForm, Controller} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {signupSchema, SignupForm} from "@/schemas/signupSchema";
+import {useRouter} from "expo-router";
 export default function SignupScreen() {
+    const router = useRouter();
     const {
         control,
         handleSubmit,
@@ -17,7 +19,17 @@ export default function SignupScreen() {
             confirmPassword: "",
         },
         mode: "onSubmit",
-    })
+    });
+
+    const onSubmit = (b: SignupForm) => {
+        console.log("First Name:", b.firstName);
+        console.log("Last Name:", b.lastName);
+        console.log("Email:", b.email);
+        router.push({
+            pathname: "/confirmation",
+            params: {firstName: b.firstName}
+        });
+    };
     
     return (
         <ScrollView contentContainerStyle = {styles.container}>
@@ -116,10 +128,14 @@ export default function SignupScreen() {
                 {errors.confirmPassword && (
                     <Text style = {styles.error}>{errors.confirmPassword.message}</Text>
                 )}
+
+                <View style = {styles.button}>
+                    <Button
+                    title = "Sign Up"
+                    onPress = {handleSubmit(onSubmit)}/>
+                </View>
             </View>
         </ScrollView>
-        
-        
     );
 }
 
@@ -166,6 +182,6 @@ const styles = StyleSheet.create({
   },
 
   button: {
-    marginTop: 15,
+    marginTop: 10,
   },
 });
